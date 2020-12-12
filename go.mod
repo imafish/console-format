@@ -1,4 +1,4 @@
-module github.com/imafish/consoleformat
+module github.com/imafish/console-format
 
 go 1.14
 
