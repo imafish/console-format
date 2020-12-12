@@ -91,7 +91,7 @@ func getTerminalSize() (int, int, error) {
 	if err != nil {
 		return 0, 0, err
 	}
-	splits := strings.Split(string(out), " ")
+	splits := strings.Split(strings.TrimRight(string(out), "\n"), " ")
 	if len(splits) < 2 {
 		return 0, 0, fmt.Errorf("unexpected output from stty: %s", string(out))
 	}
