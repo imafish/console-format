@@ -1,5 +1,7 @@
 package consoleformat
 
+import "os"
+
 type status struct {
 	statuslineMode            StatusLineMode
 	statuslineSuffixAlignMode SuffixAlignMode
@@ -17,6 +19,7 @@ type status struct {
 	initialized   bool
 	doCallback    bool
 	inCurrentLine bool
+	resizeChannel chan os.Signal
 
 	// current status
 	currentline Line

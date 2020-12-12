@@ -2,19 +2,32 @@ package consoleformat
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 // Init must be called before all other functions
 func Init() error {
 	// Init does the following:
 	// 1. get terminal window size
+	var err error
+	st.width, st.height, err = getTerminalSize()
+	if err != nil {
+		return fmt.Errorf("failed to get terminal size: %w", err)
+	}
+
 	// 2. register window size change event
+	st.resizeChannel = make(chan os.Signal)
+	signal.Notify(st.resizeChannel, syscall.SIGWINCH)
+	go onResize(st.resizeChannel)
 
 	// 3. set default values for internal objects
 	st.minimumPaddingLength = 3
 	st.margin = 2
+	st.initialized = true
 
-	return fmt.Errorf("not implemented")
+	return nil
 }
 
 // Close terminates the library.
@@ -27,6 +40,9 @@ func Close() error {
 	}
 
 	// TODO clears status line
+
+	// quit system event callback
+	close(st.resizeChannel)
 
 	return nil
 }

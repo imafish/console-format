@@ -2,6 +2,9 @@ package consoleformat
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
+	"strconv"
 	"strings"
 )
 
@@ -79,4 +82,35 @@ func displayWidth(str string) int {
 	// count asian characters as 2
 	// trim control characters
 	return int(len(str))
+}
+
+func getTerminalSize() (int, int, error) {
+	cmd := exec.Command("stty", "size")
+	cmd.Stdin = os.Stdin
+	out, err := cmd.Output()
+	if err != nil {
+		return 0, 0, err
+	}
+	splits := strings.Split(string(out), " ")
+	if len(splits) < 2 {
+		return 0, 0, fmt.Errorf("unexpected output from stty: %s", string(out))
+	}
+
+	height, err := strconv.Atoi(splits[0])
+	if err != nil {
+		return 0, 0, fmt.Errorf("failed to parse output for height: %w", err)
+	}
+
+	width, err := strconv.Atoi(splits[1])
+	if err != nil {
+		return 0, 0, fmt.Errorf("failed to parse output for width: %w", err)
+	}
+
+	return width, height, nil
+}
+
+func onResize(resizeChannel chan os.Signal) {
+	for range resizeChannel {
+		st.width, st.height, _ = getTerminalSize()
+	}
 }
