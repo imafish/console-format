@@ -42,8 +42,13 @@ func Close() error {
 	// TODO clears status line
 
 	// quit system event callback
-	close(st.resizeChannel)
+	if st.resizeChannel != nil {
+		signal.Reset(syscall.SIGWINCH)
+		close(st.resizeChannel)
+		st.resizeChannel = nil
+	}
 
+	st.initialized = false
 	return nil
 }
 
