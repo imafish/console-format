@@ -9,6 +9,13 @@ import (
 	"strings"
 )
 
+// line represents a line to display
+type line struct {
+	prefix   string
+	suffix   string
+	noSuffix bool
+}
+
 const resetSuffix = "\x1B[0m"
 const dot = "..."
 
@@ -16,7 +23,7 @@ const dot = "..."
 const minimumPaddingLength = 3
 const margin = 2
 
-func formatString(line Line, totalWidth int, suffixAlignMode SuffixAlignMode, suffixWidth int, overflowMode TextOverflowMode, padding rune) string {
+func formatString(l line, totalWidth int, suffixAlignMode SuffixAlignMode, suffixWidth int, overflowMode TextOverflowMode, padding rune) string {
 	// TODO what to do if totalWidth is too small, e.g. 20?
 
 	// build suffix
@@ -28,16 +35,16 @@ func formatString(line Line, totalWidth int, suffixAlignMode SuffixAlignMode, su
 	if suffixWidth > unit {
 		suffixWidth = unit
 	}
-	_, displayWidth, pos := analysisString(line.Suffix)
-	suffix := adjustStringWithData(line.Suffix, suffixWidth, displayWidth, pos)
+	_, displayWidth, pos := analysisString(l.suffix)
+	suffix := adjustStringWithData(l.suffix, suffixWidth, displayWidth, pos)
 	if displayWidth < suffixWidth {
 		suffix = suffix + strings.Repeat(" ", suffixWidth-displayWidth)
 	}
 
 	// build prefix
 	maximumPrefixLength := totalWidth - margin*2 - minimumPaddingLength - suffixWidth
-	_, displayWidth, pos = analysisString(line.Prefix)
-	prefix := line.Prefix
+	_, displayWidth, pos = analysisString(l.prefix)
+	prefix := l.prefix
 	if displayWidth >= maximumPrefixLength {
 		if overflowMode == TextOverflowTrim {
 			displayWidth = maximumPrefixLength

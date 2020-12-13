@@ -15,11 +15,10 @@ type status struct {
 	inCurrentLine bool
 
 	// current status
-	currentline Line
-	statusline  Line
+	currentline line
+	statusline  line
 	width       int
 	height      int
 }
 
 var st status
-

@@ -16,8 +16,14 @@ func updateStatusLine() error {
 
 // printLine formats a string that took the entire line with prefix and suffix
 // and outputs the string in the currentline
-func printLine(line Line) {
-	lineString := formatString(line, st.width, st.textSuffixAlignMode, st.textSuffixLength, st.overflowMode, st.padding)
+func printLine(l line) {
+	var lineString string
+	if l.noSuffix {
+		l.suffix = ""
+		lineString = formatString(l, st.width, st.textSuffixAlignMode, st.textSuffixLength, st.overflowMode, ' ')
+	} else {
+		lineString = formatString(l, st.width, st.textSuffixAlignMode, st.textSuffixLength, st.overflowMode, st.padding)
+	}
 
 	// TODO use io.Writer here.
 	fmt.Print("\r")

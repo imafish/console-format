@@ -63,44 +63,73 @@ func SetConfig(config Config) {
 }
 
 // SetStatusLine sets the status line
-func SetStatusLine(statusline Line) error {
-	st.statusline = statusline
+func SetStatusLine(prefix, suffix string) error {
+	st.statusline = line{prefix, suffix, true}
 	return updateStatusLine()
 }
 
 // SetStatusLinePrefix sets the prefix
 func SetStatusLinePrefix(prefix string) error {
-	st.statusline.Prefix = prefix
+	st.statusline.prefix = prefix
 	return updateStatusLine()
 }
 
 // SetStatusLineSuffix sets the suffix
 func SetStatusLineSuffix(suffix string) error {
-	st.statusline.Suffix = suffix
+	st.statusline.suffix = suffix
 	return updateStatusLine()
 }
 
-// PrintInCurrentLine prints a line in the console
+// Print prints a line in the console
 // It first move the cursor to beginning of line,
 // then print a line that fills the entire line, and leaves the cursor at
 // the end of the text
-func PrintInCurrentLine(line Line) {
+func Print(prefix, suffix string) {
 	defer updateStatusLine()
 	st.doCallback = false
 	defer func() { st.doCallback = true }()
 
-	printLine(line)
+	printLine(line{prefix: prefix, suffix: suffix})
 	st.inCurrentLine = true
 }
 
 // Println acts similar as PrintInCurrentLine,
 // except that it moves the cursor to the next line after printing
-func Println(line Line) {
+func Println(prefix, suffix string) {
 	defer updateStatusLine()
 	st.doCallback = false
 	defer func() { st.doCallback = true }()
 
-	printLine(line)
+	printLine(line{prefix: prefix, suffix: suffix})
+	NextLine()
+}
+
+// PrintNoSuffix prints a line in the console
+// It first move the cursor to beginning of line,
+// then print a line that fills the entire line, and leaves the cursor at
+// the end of the text
+func PrintNoSuffix(prefix string) {
+	defer updateStatusLine()
+	st.doCallback = false
+	defer func() { st.doCallback = true }()
+
+	printLine(line{prefix: prefix, noSuffix: true})
+	st.inCurrentLine = true
+}
+
+// PrintlnNoSuffix acts similar as PrintInCurrentLine,
+// except that it moves the cursor to the next line after printing
+func PrintlnNoSuffix(prefix string) {
+	defer updateStatusLine()
+	st.doCallback = false
+	defer func() { st.doCallback = true }()
+
+	printLine(line{prefix: prefix, noSuffix: true})
+	NextLine()
+}
+
+// NextLine moves cursor to next line
+func NextLine() {
 	fmt.Println()
 	st.inCurrentLine = false
 }

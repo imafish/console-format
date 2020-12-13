@@ -1,10 +1,5 @@
 package consoleformat
 
-// Line represents a line to display
-type Line struct {
-	Prefix string
-	Suffix string
-}
 
 // Config holds console format library settings
 type Config struct {
