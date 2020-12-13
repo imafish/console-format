@@ -2,9 +2,6 @@ package consoleformat
 
 import (
 	"fmt"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 // Init must be called before all other functions
@@ -18,13 +15,12 @@ func Init() error {
 	}
 
 	// 2. register window size change event
-	st.resizeChannel = make(chan os.Signal)
-	signal.Notify(st.resizeChannel, syscall.SIGWINCH)
-	go onResize(st.resizeChannel)
+	err = registerResizeEvent()
+	if err != nil {
+		return fmt.Errorf("failed to register resize event: %w", err)
+	}
 
 	// 3. set default values for internal objects
-	st.minimumPaddingLength = 3
-	st.margin = 2
 	st.initialized = true
 
 	return nil
@@ -41,11 +37,9 @@ func Close() error {
 
 	// TODO clears status line
 
-	// quit system event callback
-	if st.resizeChannel != nil {
-		signal.Reset(syscall.SIGWINCH)
-		close(st.resizeChannel)
-		st.resizeChannel = nil
+	err := unregisterResizeEvent()
+	if err != nil {
+		return fmt.Errorf("failed to unregister resize event: %w", err)
 	}
 
 	st.initialized = false
@@ -90,30 +84,23 @@ func SetStatusLineSuffix(suffix string) error {
 // It first move the cursor to beginning of line,
 // then print a line that fills the entire line, and leaves the cursor at
 // the end of the text
-func PrintInCurrentLine(line Line) error {
+func PrintInCurrentLine(line Line) {
 	defer updateStatusLine()
 	st.doCallback = false
 	defer func() { st.doCallback = true }()
 
-	err := printLine(line)
-	if err == nil {
-		st.inCurrentLine = true
-	}
-	return err
+	printLine(line)
+	st.inCurrentLine = true
 }
 
 // Println acts similar as PrintInCurrentLine,
 // except that it moves the cursor to the next line after printing
-func Println(line Line) error {
+func Println(line Line) {
 	defer updateStatusLine()
 	st.doCallback = false
 	defer func() { st.doCallback = true }()
 
-	err := printLine(line)
-	if err != nil {
-		return err
-	}
+	printLine(line)
 	fmt.Println()
-
-	return err
+	st.inCurrentLine = false
 }
