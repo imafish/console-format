@@ -7,7 +7,8 @@
    1. keep control characters
 6. (&#x2713;) append control character -- reset normal at the end of each string
 7. handle a few cases as a start
-8. some helper packages: progressbar, column allignment, etc.
-9. Wide character handling
+8. simplify API: do not use Line type; add method to print without suffix
+9. some helper packages: progressbar, column allignment, etc.
+10. Wide character handling
    1. when count display width
    2. when trim string
