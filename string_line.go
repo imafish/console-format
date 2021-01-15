@@ -25,6 +25,10 @@ const margin = 2
 
 func formatString(l line, totalWidth int, suffixAlignMode SuffixAlignMode, suffixWidth int, overflowMode TextOverflowMode, padding rune) string {
 	// TODO what to do if totalWidth is too small, e.g. 20?
+	// currently minumum allowed totalWidth is 40;
+	if totalWidth < 40 {
+		totalWidth = 40
+	}
 
 	// build suffix
 	if suffixAlignMode == SuffixPercentage {
