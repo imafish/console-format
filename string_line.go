@@ -45,10 +45,10 @@ func formatString(l line, totalWidth int, suffixAlignMode SuffixAlignMode, suffi
 	maximumPrefixLength := totalWidth - margin*2 - minimumPaddingLength - suffixWidth
 	_, displayWidth, pos = analysisString(l.prefix)
 	prefix := l.prefix
-	if displayWidth >= maximumPrefixLength {
+	if displayWidth > maximumPrefixLength {
 		if overflowMode == TextOverflowTrim {
-			displayWidth = maximumPrefixLength
 			prefix = adjustStringWithData(prefix, maximumPrefixLength, displayWidth, pos)
+			displayWidth = maximumPrefixLength
 		} else {
 			// TODO implement
 		}
@@ -65,7 +65,7 @@ func formatString(l line, totalWidth int, suffixAlignMode SuffixAlignMode, suffi
 }
 
 func adjustStringWithData(str string, desiredWidth int, displayWidth int, controlCharacterPositions [][]int) string {
-	if desiredWidth >= displayWidth {
+	if desiredWidth > displayWidth {
 		if strings.HasSuffix(str, resetSuffix) {
 			return str
 		}
