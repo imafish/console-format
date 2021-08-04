@@ -11,6 +11,7 @@ type status struct {
 
 	// control objects
 	initialized   bool
+	err           error
 	doCallback    bool
 	inCurrentLine bool
 

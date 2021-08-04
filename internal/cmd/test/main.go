@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"os"
 	"time"
 
 	"github.com/fatih/color"
@@ -10,11 +8,6 @@ import (
 )
 
 func main() {
-	err := cf.Init()
-	if err != nil {
-		fmt.Printf("%s\n", err.Error())
-		os.Exit(1)
-	}
 	defer cf.Close()
 
 	config := cf.Config{

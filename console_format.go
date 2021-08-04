@@ -4,26 +4,26 @@ import (
 	"fmt"
 )
 
-// Init must be called before all other functions
-func Init() error {
+func init() {
 	// Init does the following:
 	// 1. get terminal window size
 	var err error
 	st.width, st.height, err = getTerminalSize()
 	if err != nil {
-		return fmt.Errorf("failed to get terminal size: %w", err)
+		st.err = err
+		return
 	}
 
 	// 2. register window size change event
 	err = registerResizeEvent()
 	if err != nil {
-		return fmt.Errorf("failed to register resize event: %w", err)
+		st.err = err
+		return
+
 	}
 
 	// 3. set default values for internal objects
 	st.initialized = true
-
-	return nil
 }
 
 // Close terminates the library.
